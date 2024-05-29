@@ -17,10 +17,10 @@ X2NIOSVN_FILES = ImGuiDrawView.mm $(wildcard Esp/*.mm) $(wildcard Esp/*.m) $(wil
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
-all::
-	@echo "Building tweak..."
-
 package::
 	@echo "Packaging tweak..."
 	$(ECHO_NOTHING)mkdir -p $(THEOS_PACKAGE_DIR)$(ECHO_END)
-	$(ECHO_NOTHING)cp -r $(THEOS_OBJ_DIR)/*.deb $(THEOS_PACKAGE_DIR)$(ECHO_END)
+	$(ECHO_NOTHING)cp -r $(THEOS_OBJ_DIR)/$(TWEAK_NAME).deb $(THEOS_PACKAGE_DIR)$(ECHO_END)
+
+all::
+	$(MAKE) -C $(THEOS) package
