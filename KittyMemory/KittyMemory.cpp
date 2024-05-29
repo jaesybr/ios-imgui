@@ -1,46 +1,20 @@
-//
-//  KittyMemory.cpp
-//
-//
-//  Created by MJ (Ruit) on 1/1/19.
-//
-//
-
 #include "KittyMemory.hpp"
-#include <substrate.h>
-
 
 using KittyMemory::Memory_Status;
 
-
-// may not be accurate
 static bool cydiaExist(){
-  bool ret = false;
-  FILE *f = NULL;
-  if(( f = fopen( "/Applications/Cydia.app" , "r" ) ) 
-  || ( f = fopen( "/Library/MobileSubstrate/MobileSubstrate.dylib" , "r" ) )){
-      ret = true;
-  }
-  if(f != NULL){
-    fclose(f);
-  }
-  return ret;
+    return false;
 }
 
 typedef void (*MSHookMemory_t)(void *, const void *, size_t);
 inline bool findMSHookMemory(void *dst, const void *src, size_t len){
-  static void *ret = MSFindSymbol(NULL, "_MSHookMemory");
-  if(ret != NULL){
-    reinterpret_cast<MSHookMemory_t>(ret)(dst, src, len);
-    return true;
-  }
-  return false;
+    return false;
 }
 
 
 extern "C" kern_return_t mach_vm_remap(vm_map_t, mach_vm_address_t *, mach_vm_size_t,
-                                  mach_vm_offset_t, int, vm_map_t, mach_vm_address_t,
-                                  boolean_t, vm_prot_t *, vm_prot_t *, vm_inherit_t);
+                                       mach_vm_offset_t, int, vm_map_t, mach_vm_address_t,
+                                       boolean_t, vm_prot_t *, vm_prot_t *, vm_inherit_t);
 
 
 bool KittyMemory::ProtectAddr(void *address, size_t length, int protection, bool aligned) {
@@ -51,7 +25,6 @@ bool KittyMemory::ProtectAddr(void *address, size_t length, int protection, bool
     uintptr_t pageLen   = _PAGE_LEN_OF_(address, length);
     return mprotect(reinterpret_cast<void *>(pageStart), pageLen, protection) != -1;
 }
-
 
 kern_return_t KittyMemory::getPageInfo(void *page_start, vm_region_submap_short_info_64 *outInfo) {
     vm_address_t region  = reinterpret_cast<vm_address_t>(page_start);
@@ -64,14 +37,8 @@ kern_return_t KittyMemory::getPageInfo(void *page_start, vm_region_submap_short_
                                             &info_count);
 }
 
-
-/*
-refs to
-- https://github.com/asLody/whale/blob/master/whale/src/platform/memory.cc
-- CydiaSubstrate
-*/
 Memory_Status KittyMemory::memWrite(void *address, const void *buffer, size_t len) {
-	if (address == NULL)
+    if (address == NULL)
         return INV_ADDR;
 
     if (buffer == NULL)
@@ -79,8 +46,7 @@ Memory_Status KittyMemory::memWrite(void *address, const void *buffer, size_t le
 
     if (len < 1 || len > INT_MAX)
         return INV_LEN;
-	
-	// check for MSHookMemory that was added recently, but check for cydia existance first.
+    
     if(cydiaExist() && findMSHookMemory(address, buffer, len)){ 
        return SUCCESS;
      }
@@ -127,7 +93,6 @@ Memory_Status KittyMemory::memWrite(void *address, const void *buffer, size_t le
     return SUCCESS;
 }
 
-
 Memory_Status KittyMemory::memRead(void *buffer, const void *addr, size_t len) {
     if (addr == NULL)
         return INV_ADDR;
@@ -143,7 +108,6 @@ Memory_Status KittyMemory::memRead(void *buffer, const void *addr, size_t len) {
 
     return FAILED;
 }
-
 
 std::string KittyMemory::read2HexStr(const void *addr, size_t len) {
     char temp[len];
@@ -166,7 +130,6 @@ std::string KittyMemory::read2HexStr(const void *addr, size_t len) {
     return ret;
 }
 
-
 KittyMemory::memory_file_info KittyMemory::getBaseInfo(){
     memory_file_info _info = {
         0,
@@ -176,8 +139,6 @@ KittyMemory::memory_file_info KittyMemory::getBaseInfo(){
     };
     return _info;
 }
-
-
 
 KittyMemory::memory_file_info KittyMemory::getMemoryFileInfo(const char *fileName){
     memory_file_info _info;
@@ -198,14 +159,13 @@ KittyMemory::memory_file_info KittyMemory::getMemoryFileInfo(const char *fileNam
     return _info;
 }
 
-
 uint64_t KittyMemory::getAbsoluteAddress(const char *fileName, uint64_t address){
-	memory_file_info info;
-	if(fileName != NULL){
-	   info = getMemoryFileInfo(fileName);
-	} else {
-	   info = getBaseInfo();
-	}
+    memory_file_info info;
+    if(fileName != NULL){
+       info = getMemoryFileInfo(fileName);
+    } else {
+       info = getBaseInfo();
+    }
     if(info.address == 0)
         return 0;
     return info.address + address;
