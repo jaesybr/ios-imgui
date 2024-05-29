@@ -15,13 +15,7 @@ X2NIOSVN_CFLAGS = -fobjc-arc -Wno-deprecated-declarations -Wno-unused-variable -
 
 X2NIOSVN_FILES = ImGuiDrawView.mm $(wildcard Esp/*.mm) $(wildcard Esp/*.m) $(wildcard KittyMemory/*.cpp) $(wildcard KittyMemory/*.mm)
 
-#X2NIOSVN_LIBRARIES += substrate
-# GO_EASY_ON_ME = 1
-
 include $(THEOS_MAKE_PATH)/tweak.mk
-
-package::
-    $(ECHO_NOTHING)$(ECHO_END)
 
 all::
 	$(MAKE) -C $(THEOS) package
