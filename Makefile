@@ -1,9 +1,3 @@
-ARCHS = arm64
-
-DEBUG = 0
-FINALPACKAGE = 1
-FOR_RELEASE = 1
-
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = X2NIOSVN
@@ -14,12 +8,6 @@ X2NIOSVN_CCFLAGS = -std=c++11 -fno-rtti -fno-exceptions -DNDEBUG
 X2NIOSVN_CFLAGS = -fobjc-arc -Wno-deprecated-declarations -Wno-unused-variable -Wno-unused-value
 
 X2NIOSVN_FILES = ImGuiDrawView.mm $(wildcard Esp/*.mm) $(wildcard Esp/*.m) $(wildcard KittyMemory/*.cpp) $(wildcard KittyMemory/*.mm)
-
-# Add a rule to build the package
-package::
-    @echo "Packaging tweak..."
-    $(ECHO_NOTHING)mkdir -p $(THEOS_PACKAGE_DIR)$(ECHO_END)
-    $(ECHO_NOTHING)cp $(THEOS_OBJ_DIR)/X2NIOSVN.deb $(THEOS_PACKAGE_DIR)/com.modmenu.x2nios_1.0_iphoneos-arm.deb$(ECHO_END)
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
