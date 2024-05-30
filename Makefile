@@ -10,11 +10,3 @@ X2NIOSVN_CFLAGS = -fobjc-arc -Wno-deprecated-declarations -Wno-unused-variable -
 X2NIOSVN_FILES = ImGuiDrawView.mm $(wildcard Esp/*.mm) $(wildcard Esp/*.m) $(wildcard KittyMemory/*.cpp) $(wildcard KittyMemory/*.mm)
 
 include $(THEOS_MAKE_PATH)/tweak.mk
-
-package::
-	@echo "Packaging tweak..."
-	$(ECHO_NOTHING)mkdir -p $(THEOS_PACKAGE_DIR)$(ECHO_END)
-	$(ECHO_NOTHING)cp $(THEOS_OBJ_DIR)/X2NIOSVN.deb $(THEOS_PACKAGE_DIR)/com.modmenu.x2nios_1.0_iphoneos-arm.deb$(ECHO_END)
-
-all::
-	$(MAKE) -C $(THEOS) package
